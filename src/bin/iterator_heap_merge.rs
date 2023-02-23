@@ -77,9 +77,9 @@ impl<T: Ord, I: Iterator<Item = T>> PartialEq for IterBuf<T, I> {
 }
 
 fn main() -> anyhow::Result<()> {
-    let first = (1..10).into_iter();
+    let first = (1..5).into_iter();
     let second = (1..10).into_iter();
-    let third = (1..10).into_iter();
+    let third = (8..13).into_iter();
 
     let mut merged = MergedIterator::new();
 
