@@ -43,8 +43,6 @@ impl<T: Ord, I: Iterator<Item = T>> Iterator for MergedIterator<T, I> {
     }
 }
 
-// It may be easier to use a peekable iterator here rather than this buffered iterator construct.
-// But we are using this explicit form for illustrative purposes.
 struct IterBuf<T: Ord, I: Iterator<Item = T>> {
     iter: I,
     buf: Option<T>,
@@ -55,9 +53,9 @@ impl<T: Ord, I: Iterator<Item = T>> Ord for IterBuf<T, I> {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         match (&self.buf, &other.buf) {
             (None, None) => std::cmp::Ordering::Equal,
-            (None, Some(_)) => std::cmp::Ordering::Less, // Min Heap: Prioritize any value over None
-            (Some(_), None) => std::cmp::Ordering::Greater, // Min Heap: Prioritize any value over None
-            (Some(this_one), Some(other_one)) => other_one.cmp(&this_one), // Min Heap: Reversed condition
+            (None, Some(_)) => std::cmp::Ordering::Less,
+            (Some(_), None) => std::cmp::Ordering::Greater,
+            (Some(this_one), Some(other_one)) => other_one.cmp(&this_one),
         }
     }
 }
