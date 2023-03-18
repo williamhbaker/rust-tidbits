@@ -4,7 +4,7 @@ use std::{
 };
 
 fn main() -> anyhow::Result<()> {
-    let mut limiter = TokenBucket::new(time::Duration::from_secs(10), 5);
+    let mut limiter = TokenBucket::new(time::Duration::from_secs(3600), 60);
     for _ in 0..=10 {
         thread::sleep(time::Duration::from_secs(1));
         println!("{}", limiter.allowed());
@@ -19,7 +19,7 @@ fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
-trait HitCounter {
+trait RateLimiter {
     fn new(window: time::Duration, limit: usize) -> Self;
     fn allowed(&mut self) -> bool;
 }
@@ -31,7 +31,7 @@ struct FixedWindow {
     limit: usize,
 }
 
-impl HitCounter for FixedWindow {
+impl RateLimiter for FixedWindow {
     fn new(window: time::Duration, limit: usize) -> Self {
         FixedWindow {
             window_start: Instant::now(),
@@ -67,7 +67,7 @@ struct MovingWindow {
     limit: usize,
 }
 
-impl HitCounter for MovingWindow {
+impl RateLimiter for MovingWindow {
     fn new(window: time::Duration, limit: usize) -> Self {
         let now = Instant::now();
 
@@ -133,7 +133,7 @@ impl TokenBucket {
     }
 }
 
-impl HitCounter for TokenBucket {
+impl RateLimiter for TokenBucket {
     fn new(window: time::Duration, limit: usize) -> Self {
         TokenBucket {
             tokens: 0,
